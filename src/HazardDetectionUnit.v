@@ -25,7 +25,17 @@ module HazardDetectionUnit (
         // If the instruction in EX/MEM is a load and the instruction in ID/EX
         // uses its destination register, the pipeline must stall one cycle.
 
-        // TODO: Implementar a lógica para detectar hazard causado por load aqui!!!
+        // Conferir tipo da instrução (no EX/MEM)
+	      // Tecnicamente não necessário no nosso caso
+	      //  mas implementamos como se fosse ter outras instruções
+        // Para load
+        if (exmem_op == LW) begin
+            // Se a próxima instrução (no ID/EX) usar o mesmo registrador do load
+            if (idex_rs1 == exmem_rd || idex_rs2 == exmem_rd) begin
+                // Dar stall
+                stall = 1'b1;
+            end ///// if (idex_rs1 == exmem_rd || idex_rs2 == exmem_rd)
+        end ///// if (exmem_op == LW)
 
     end
 
