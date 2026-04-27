@@ -29,7 +29,30 @@ module ForwardingUnit (
         forwardB = NO_FORWARD;
 
         // TODO: implementar lógica do forwarding para operando A aqui!!!
-        // TODO: implementar lógica do forwarding para operando B aqui!!!
-    end
+        if(exmem_op == 7'b000_011 or exmem_op == 7'b001_0011) begin 
+            //condicionais de forward A ======================
+            if (exmem_rd == idex_rs1) begin
+                forwardA = 2'b01
+            end
+
+            if (memwb_rd == idex_rs1) begin
+                forwardA = 2'b10
+            end
+            //================================================
+
+            // TODO: implementar lógica do forwarding para operando B aqui!!!
+
+            //condicionais de forward B ======================
+            if (exmem_rd == idex_rs2) begin
+                forwardB = 2'b01
+            end
+
+            if (memwb_rd == idex_rs2) begin
+                forwardB = 2'b10
+            end
+            //================================================
+        end
+
+    end 
 
 endmodule
