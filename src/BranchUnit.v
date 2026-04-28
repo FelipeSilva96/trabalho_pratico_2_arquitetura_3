@@ -38,23 +38,20 @@ module BranchUnit (
 	    	//  na memória
 	        if (rs1_value == rs2_value) begin
 
-            // Atualizar branch target
-	    	    // PC atual + imediato (branch_imm)
-	    	branch_target = pc_ex + branch_imm;
+                // Atualizar branch target
+	    	        // PC atual + imediato (branch_imm)
+	    	    branch_target = pc_ex + branch_imm;
 
-	    	// Atualizar branch taken
-	    	    // Sinal para indicar que mudamos o path,
-	    	    //  assim no RISCVCPU ele vai atribuir o branch_taken
-	    	    //  ao PC, ao invés de atribuir o padrão de aumentar em 4
-	    	branch_taken = 1'b1;
-
-	        	// Debug: Sinalizar branch
-	    	//$display("Branch taken")
+	    	    // Atualizar branch taken
+	    	        // Sinal para indicar que mudamos o path,
+	    	        //  assim no RISCVCPU ele vai atribuir o branch_taken
+	    	        //  ao PC, ao invés de atribuir o padrão de aumentar em 4
+	    	    branch_taken = 1'b1;
 
 	        end ///// if (rs1_value == rs2_value)
 
 	    end ///// if (opcode == BEQ)
     
-    end
+    end ///// always
 
 endmodule
