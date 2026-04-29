@@ -50,7 +50,8 @@ module tb_RISCVCPU;
     task run_full_dependencies;
         begin
             clear_memories();
-            load_program_full_dependencies();
+            load_program_full_dependencies(); // Versão sem forwarding
+            //load_program_forwarding();      // Versão com forwarding
             reset_cpu();
             while(!halt) @(posedge clock);
             print_stats("full_dependencies");
@@ -63,24 +64,61 @@ module tb_RISCVCPU;
         begin
             cpu.DMemory[0] = 32'd10;
 
-            cpu.IMemory[0] = 32'h00002083;  // lw   x1, 0(x0)      # x1 = mem[0]
+            cpu.IMemory[0] = 32'h00002083;   // lw   x1, 0(x0)       # x1 = mem[0]
+            cpu.IMemory[1] = 32'h00000013;   // nop
+            cpu.IMemory[2] = 32'h00000013;   // nop
+            cpu.IMemory[3] = 32'h00000013;   // nop
+            cpu.IMemory[4] = 32'h00508113;   // addi x2, x1, 5       # x2 = x1 + 5
+            cpu.IMemory[5] = 32'h00000013;   // nop
+            cpu.IMemory[6] = 32'h00000013;   // nop
+            cpu.IMemory[7] = 32'h00000013;   // nop
+            cpu.IMemory[8] = 32'h00110193;   // addi x3, x2, 1       # x3 = x2 + 1
+            cpu.IMemory[9] = 32'h00000013;   // nop
+            cpu.IMemory[10] = 32'h00000013;  // nop
+            cpu.IMemory[11] = 32'h00000013;  // nop
+                // Reordenado aqui para economizar um ciclo na espera de x4 para o beq
+            cpu.IMemory[12] = 32'h00a18213;  // addi x4, x3, 10      # x4 = x3 + 10
+            cpu.IMemory[13] = 32'h00302223;  // sw   x3, 4(x0)       # mem[1] = x3
+            cpu.IMemory[14] = 32'h00000013;  // nop
+            cpu.IMemory[15] = 32'h00000013;  // nop
+
+            // PC do beq = 64, label está em PC = 80
+            // offset = 80 - 64 = 16 bytes
+            cpu.IMemory[16] = 32'h00420863;  // beq  x4, x4, label   # sempre tomado
+            cpu.IMemory[17] = 32'h00000013;  // nop
+
+            cpu.IMemory[18] = 32'h06300293;  // addi x5, x0, 99      # deve ser flushado
+            cpu.IMemory[19] = 32'h05800313;  // addi x6, x0, 88      # pode ser flushado
+
+            // label:
+            cpu.IMemory[20] = 32'h00120393;  // addi x7, x4, 1       # x7 = resultado final = x4 + 1
+
+            cpu.IMemory[21] = 32'h0000000b;  // halt                 # Instrução para finalizar a simulação
+        end
+    endtask
+
+    task load_program_forwarding;
+        begin
+            cpu.DMemory[0] = 32'd10;
+
+            cpu.IMemory[0] = 32'h00002083;  // lw   x1, 0(x0)       # x1 = mem[0]
             // Um nop é adicionado aqui pois o HazardDetectionUnit faz um stall
-            cpu.IMemory[1] = 32'h00508113;  // addi x2, x1, 5      # x2 = x1 + 5
-            cpu.IMemory[2] = 32'h00110193; // addi x3, x2, 1       # x3 = x2 + 1
-            cpu.IMemory[3] = 32'h00302223; // sw   x3, 4(x0)       # mem[1] = x3
-            cpu.IMemory[4] = 32'h00a18213; // addi x4, x3, 10      # x4 = x3 + 10
+            cpu.IMemory[1] = 32'h00508113;  // addi x2, x1, 5       # x2 = x1 + 5
+            cpu.IMemory[2] = 32'h00110193;  // addi x3, x2, 1       # x3 = x2 + 1
+            cpu.IMemory[3] = 32'h00302223;  // sw   x3, 4(x0)       # mem[1] = x3
+            cpu.IMemory[4] = 32'h00a18213;  // addi x4, x3, 10      # x4 = x3 + 10
             
             // PC do beq = 56, label está em PC = 20
             // offset = 32 - 20 = 12 bytes
-            cpu.IMemory[5] = 32'h00420663; // beq  x4, x4, label   # sempre tomado
+            cpu.IMemory[5] = 32'h00420663;  // beq  x4, x4, label   # sempre tomado
 
-            cpu.IMemory[6] = 32'h06300293; // addi x5, x0, 99      # deve ser flushado
-            cpu.IMemory[7] = 32'h05800313; // addi x6, x0, 88      # pode ser flushado
+            cpu.IMemory[6] = 32'h06300293;  // addi x5, x0, 99      # deve ser flushado
+            cpu.IMemory[7] = 32'h05800313;  // addi x6, x0, 88      # pode ser flushado
 
             // label:
-            cpu.IMemory[8] = 32'h00120393; // addi x7, x4, 1       # x7 = resultado final = x4 + 1
+            cpu.IMemory[8] = 32'h00120393;  // addi x7, x4, 1       # x7 = resultado final = x4 + 1
 
-            cpu.IMemory[9] = 32'h0000000b; // halt                 # Instrução para finalizar a simulação
+            cpu.IMemory[9] = 32'h0000000b;  // halt                 # Instrução para finalizar a simulação
         end
     endtask
 
