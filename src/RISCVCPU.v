@@ -8,7 +8,7 @@ module RISCVCPU (
     localparam LW    = 7'b000_0011;
     localparam SW    = 7'b010_0011;
     localparam BEQ   = 7'b110_0011;
-    localparam ALUop = 7'b001_0011; // used here as ADDI-style immediate ALU operation
+    localparam ALUop = 7'b001_0011; // used here as ADDI-style imm ALU operation
     localparam HALT_OP = 7'b0001011; 
 
     localparam NOP  = 32'h0000_0013;

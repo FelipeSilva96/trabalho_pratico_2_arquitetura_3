@@ -21,7 +21,7 @@ module HazardDetectionUnit (
     always @(*) begin
         stall = 1'b0;
 
-        // Conferir tipo da instrução (no EX/MEM)
+        // Conferir tipo da instrução (EX/MEM)
 	      // Tecnicamente não necessário no nosso caso
 	      //  mas implementamos como se fosse ter outras instruções
         // Para load
