@@ -82,18 +82,17 @@ module tb_RISCVCPU;
             cpu.IMemory[14] = 32'h00000013;  // nop
             cpu.IMemory[15] = 32'h00000013;  // nop
 
-            // PC do beq = 64, label está em PC = 80
-            // offset = 80 - 64 = 16 bytes
-            cpu.IMemory[16] = 32'h00420863;  // beq  x4, x4, label   # sempre tomado
-            cpu.IMemory[17] = 32'h00000013;  // nop
+            // PC do beq = 64, label está em PC = 76
+            // offset = 76 - 64 = 12 bytes
+            cpu.IMemory[16] = 32'h00420663;  // beq  x4, x4, label   # sempre tomado
 
-            cpu.IMemory[18] = 32'h06300293;  // addi x5, x0, 99      # deve ser flushado
-            cpu.IMemory[19] = 32'h05800313;  // addi x6, x0, 88      # pode ser flushado
+            cpu.IMemory[17] = 32'h06300293;  // addi x5, x0, 99      # deve ser flushado
+            cpu.IMemory[18] = 32'h05800313;  // addi x6, x0, 88      # pode ser flushado
 
             // label:
-            cpu.IMemory[20] = 32'h00120393;  // addi x7, x4, 1       # x7 = resultado final = x4 + 1
+            cpu.IMemory[19] = 32'h00120393;  // addi x7, x4, 1       # x7 = resultado final = x4 + 1
 
-            cpu.IMemory[21] = 32'h0000000b;  // halt                 # Instrução para finalizar a simulação
+            cpu.IMemory[20] = 32'h0000000b;  // halt                 # Instrução para finalizar a simulação
         end
     endtask
 
